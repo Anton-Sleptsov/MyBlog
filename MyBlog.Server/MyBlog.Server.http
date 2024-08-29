@@ -1,0 +1,6 @@
+@MyBlog.Server_HostAddress = http://localhost:5167
+
+GET {{MyBlog.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
