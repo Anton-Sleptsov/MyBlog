@@ -46,6 +46,8 @@ builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<NewsRepository>();
 
+builder.Services.AddScoped<NoSqlDataService>();
+
 builder.Services.AddScoped<UserMapper>();
 builder.Services.AddScoped<NewsMapper>();
 

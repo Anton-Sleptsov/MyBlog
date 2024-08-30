@@ -6,10 +6,13 @@ namespace MyBlog.Data.Repositories
     public class NewsRepository
     {
         private readonly BlogDbContext _dbContext;
+        private readonly NoSqlDataService _noSqlDataService;
 
-        public NewsRepository(BlogDbContext dbContext)
+        public NewsRepository(BlogDbContext dbContext, 
+            NoSqlDataService noSqlDataService)
         {
             _dbContext = dbContext;
+            _noSqlDataService = noSqlDataService;
         }
 
         public List<News> GetByAuthor(int userId)
@@ -68,13 +71,11 @@ namespace MyBlog.Data.Repositories
         {
             List<News> newsForUser = new();
 
-            var subs = _dbContext.UserSubs
-                .Where(sub => sub.From == userId)
-                .ToList();
+            var authors = _noSqlDataService.GetUserSubs(userId).AuthorIds;
 
-            foreach (var sub in subs)
+            foreach (var author in authors)
             {
-                var newsFromThisAuthor = GetByAuthor(sub.To);
+                var newsFromThisAuthor = GetByAuthor(author);
                 newsForUser.AddRange(newsFromThisAuthor);
             }
 
@@ -83,46 +84,19 @@ namespace MyBlog.Data.Repositories
                 .ToList();
         }
 
-        public bool SetLike(int userId, int newsId)
+        public void SetLike(int userId, int newsId)
         {
-            if (_dbContext.NewsLikes.Any(l => l.UserId == userId && l.NewsId == newsId))
-            {
-                return false;
-            }
-
-            if (!_dbContext.News.Any(news => news.Id == newsId))
-            {
-                return false;
-            }
-
-            var like = new NewsLike
-            {
-                UserId = userId,
-                NewsId = newsId
-            };
-
-            _dbContext.NewsLikes.Add(like);
-            _dbContext.SaveChanges();
-            return false;
+            _noSqlDataService.SetLike(newsId, userId);
         }
 
         public void RemoveLike(int userId, int newsId)
         {
-            var like = _dbContext.NewsLikes.FirstOrDefault(l => l.UserId == userId && l.NewsId == newsId);
-            if (like is null)
-            {
-                return;
-            }
-
-            _dbContext.NewsLikes.Remove(like);
-            _dbContext.SaveChanges();
+            _noSqlDataService.RemoveLike(newsId, userId);
         }
 
         public int GetCountOfLikes(int newsId)
         {
-            return _dbContext.NewsLikes
-                .Where(like => like.NewsId == newsId)
-                .Count();
+            return _noSqlDataService.GetNewsLikes(newsId).UserIds.Count;
         }
     }
 }

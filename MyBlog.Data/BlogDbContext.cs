@@ -8,8 +8,6 @@ namespace MyBlog.Data
         public const string CONNECTION_STRING = "Data Source=(localdb)\\mssqllocaldb;Integrated Security=True;Database=BlogAppDb";
         public DbSet<User> Users { get; set; }
         public DbSet<News> News { get; set; }
-        public DbSet<UserSub> UserSubs { get; set; }
-        public DbSet<NewsLike> NewsLikes { get; set; }
 
         public BlogDbContext() { }
         public BlogDbContext(DbContextOptions<BlogDbContext> contextOptions) : base(contextOptions) { }

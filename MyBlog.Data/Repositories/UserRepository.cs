@@ -5,10 +5,13 @@ namespace MyBlog.Data.Repositories
     public class UserRepository
     {
         private readonly BlogDbContext _dbContext;
+        private readonly NoSqlDataService _noSqlDataService;
 
-        public UserRepository(BlogDbContext dbContext)
+        public UserRepository(BlogDbContext dbContext, 
+            NoSqlDataService noSqlDataService)
         {
             _dbContext = dbContext;
+            _noSqlDataService = noSqlDataService;
         }
 
         public User Create(User user)
@@ -57,40 +60,14 @@ namespace MyBlog.Data.Repositories
             _dbContext.SaveChanges();
         }
 
-        public bool Subscribe(int userId, int authorId)
+        public void Subscribe(int userId, int authorId)
         {
-            if (_dbContext.UserSubs.Any(s => s.From == userId && s.To == authorId))
-            {
-                return false;
-            }
-
-            if (!_dbContext.Users.Any(user => user.Id == authorId))
-            {
-                return false;
-            }
-
-            var sub = new UserSub
-            {
-                From = userId,
-                To = authorId,
-                Date = DateTime.UtcNow
-            };
-
-            _dbContext.UserSubs.Add(sub);
-            _dbContext.SaveChanges();
-            return true;
+            _noSqlDataService.Subscribe(userId, authorId);
         }
 
         public void Unsubscribe(int userId, int authorId)
         {
-            var sub = _dbContext.UserSubs.FirstOrDefault(s => s.From == userId && s.To == authorId);
-            if (sub is null)
-            {
-                return;
-            }
-
-            _dbContext.UserSubs.Remove(sub);
-            _dbContext.SaveChanges();
+            _noSqlDataService.Unsubscribe(userId, authorId);
         }
     }
 }
