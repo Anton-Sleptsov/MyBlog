@@ -16,6 +16,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(x =>
+{
+    x.AddDefaultPolicy(p =>
+    {
+        p.AllowAnyMethod();
+        p.AllowAnyOrigin();
+        p.AllowAnyHeader();
+    });
+});
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -52,6 +62,8 @@ builder.Services.AddScoped<UserMapper>();
 builder.Services.AddScoped<NewsMapper>();
 
 var app = builder.Build();
+
+app.UseCors();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();

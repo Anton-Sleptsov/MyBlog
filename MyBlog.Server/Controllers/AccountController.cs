@@ -119,7 +119,7 @@ namespace MyBlog.Server.Controllers
             return NoContent();
         }
 
-        [HttpPost("/token")]
+        [HttpPost("/[controller]/token")]
         [AllowAnonymous]
         public ActionResult<AuthToken> GetToken()
         {
