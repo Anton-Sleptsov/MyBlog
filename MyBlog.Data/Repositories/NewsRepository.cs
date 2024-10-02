@@ -71,7 +71,12 @@ namespace MyBlog.Data.Repositories
         {
             List<News> newsForUser = new();
 
-            var authors = _noSqlDataService.GetUserSubs(userId).AuthorIds;
+            var authors = _noSqlDataService.GetUserSubs(userId)?.AuthorIds;
+
+            if(authors is null)
+            {
+                return [];
+            }
 
             foreach (var author in authors)
             {
@@ -96,7 +101,7 @@ namespace MyBlog.Data.Repositories
 
         public int GetCountOfLikes(int newsId)
         {
-            return _noSqlDataService.GetNewsLikes(newsId).UserIds.Count;
+            return _noSqlDataService.GetNewsLikes(newsId)?.UserIds.Count ?? 0;
         }
     }
 }

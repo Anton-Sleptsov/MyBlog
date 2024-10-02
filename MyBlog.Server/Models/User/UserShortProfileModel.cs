@@ -1,12 +1,10 @@
 ﻿namespace MyBlog.Server.Models.User
 {
-    public class UserProfileModel
+    public class UserShortProfileModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Email { get; set; }
-        public string? Description { get; set; }
+        public string? ShortDescription { get; set; }
         public byte[]? Photo { get; set; }
-        public int SubscribersCount { get; set; }
     }
 }

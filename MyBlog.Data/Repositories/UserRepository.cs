@@ -33,6 +33,13 @@ namespace MyBlog.Data.Repositories
                 .FirstOrDefault(user => user.Email == login);
         }
 
+        public List<User> GetByName(string name)
+        {
+            return _dbContext.Users
+                .Where(user => user.Name.ToLower().Contains(name.ToLower()))
+                .ToList();
+        }
+
         public User Update(User user)
         {
             var updatedUser = GetById(user.Id);
@@ -68,6 +75,11 @@ namespace MyBlog.Data.Repositories
         public void Unsubscribe(int userId, int authorId)
         {
             _noSqlDataService.Unsubscribe(userId, authorId);
+        }
+
+        public int GetSubscribersCount(int userId)
+        {
+            return _noSqlDataService.GetSubscribersCount(userId);
         }
     }
 }

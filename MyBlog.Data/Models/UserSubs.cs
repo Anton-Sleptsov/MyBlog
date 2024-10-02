@@ -2,7 +2,7 @@
 {
     public class UserSubs
     {
-        public int UserId { get; set; }
+        public int Id { get; set; }
         public List<int> AuthorIds { get; set; }
     }
 }

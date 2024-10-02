@@ -8,6 +8,7 @@ using MyBlog.Server.Models;
 using MyBlog.Server.Servises;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using MyBlog.Data.Models;
 
 namespace MyBlog.Server.Controllers
 {
@@ -39,6 +40,34 @@ namespace MyBlog.Server.Controllers
 
             return Ok(createdProfile);
         }
+
+        [HttpPost("/[controller]/all")]
+        public ActionResult<List<UserProfileModel>> CreateUsers([FromBody] List<UserCreateModel> users)
+        {
+            var currentUserEmail = HttpContext.User.Identity!.Name;
+            var currentUser = _userRepository.GetByLogin(currentUserEmail);
+            if (currentUser is null)
+            {
+                return NotFound();
+            }
+            else if (currentUser.Id != 1)
+            {
+                return BadRequest();
+            }
+
+            var createdProfiles = new List<UserProfileModel>();
+
+            foreach (var user in users)
+            {              
+                var newUser = _userMapper.BuildDataModelFromCreate(user);
+                var createdUser = _userRepository.Create(newUser);
+                var createdProfile = _userMapper.BuildProfile(createdUser);
+                createdProfiles.Add(createdProfile);
+            }
+
+            return Ok(createdProfiles);
+        }
+
 
         [HttpGet]
         public ActionResult<UserProfileModel> Get()

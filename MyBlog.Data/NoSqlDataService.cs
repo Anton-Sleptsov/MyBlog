@@ -5,7 +5,7 @@ namespace MyBlog.Data
 {
     public class NoSqlDataService
     {
-        private readonly string _databasePath = "";
+        private readonly string _databasePath = "MyBlog_NoSqlDB.db";
 
         private const string SUBS_COLLECTION = nameof(SUBS_COLLECTION);
         private const string NEWS_LIKE_COLLECTION = nameof(NEWS_LIKE_COLLECTION);
@@ -16,7 +16,7 @@ namespace MyBlog.Data
             {
                 var subs = db.GetCollection<UserSubs>(SUBS_COLLECTION);
 
-                return subs.FindOne(s => s.UserId == userId);
+                return subs.FindOne(s => s.Id == userId);
             }
         }
 
@@ -26,7 +26,7 @@ namespace MyBlog.Data
             {
                 var subs = db.GetCollection<UserSubs>(SUBS_COLLECTION);
 
-                var subsForUser = subs.FindOne(s => s.UserId == userId);
+                var subsForUser = subs.FindOne(s => s.Id == userId);
 
                 if (subsForUser is not null) 
                 { 
@@ -40,12 +40,12 @@ namespace MyBlog.Data
                 {
                     var newSubsForUser = new UserSubs
                     {
-                        UserId = userId,
+                        Id = userId,
                         AuthorIds = new List<int> { authorId }
                     };
 
                     subs.Insert(newSubsForUser);
-                    subs.EnsureIndex(s => s.UserId);
+                    subs.EnsureIndex(s => s.Id);
 
                     subsForUser = newSubsForUser;
                 }
@@ -60,7 +60,7 @@ namespace MyBlog.Data
             {
                 var subs = db.GetCollection<UserSubs>(SUBS_COLLECTION);
 
-                var subsForUser = subs.FindOne(s => s.UserId == userId);
+                var subsForUser = subs.FindOne(s => s.Id == userId);
 
                 if (subsForUser is not null && subsForUser.AuthorIds.Contains(authorId))
                 {
@@ -72,13 +72,23 @@ namespace MyBlog.Data
             }
         }
 
+        internal int GetSubscribersCount(int userId)
+        {
+            using (var db = new LiteDatabase(_databasePath))
+            {
+                var subs = db.GetCollection<UserSubs>(SUBS_COLLECTION);
+
+                return subs.Count(s => s.AuthorIds.Contains(userId));
+            }
+        }
+
         internal NewsLikes GetNewsLikes(int newsId)
         {
             using (var db = new LiteDatabase(_databasePath))
             {
                 var likes = db.GetCollection<NewsLikes>(NEWS_LIKE_COLLECTION);
 
-                return likes.FindOne(l => l.NewsId == newsId);
+                return likes.FindOne(l => l.Id == newsId);
             }
         }
 
@@ -88,7 +98,7 @@ namespace MyBlog.Data
             {
                 var likes = db.GetCollection<NewsLikes>(NEWS_LIKE_COLLECTION);
 
-                var likesForNews = likes.FindOne(l => l.NewsId == newsId);
+                var likesForNews = likes.FindOne(l => l.Id == newsId);
 
                 if (likesForNews is not null)
                 {
@@ -102,12 +112,12 @@ namespace MyBlog.Data
                 {
                     var newLikesForNews = new NewsLikes
                     {
-                        NewsId = newsId,
+                        Id = newsId,
                         UserIds = new List<int> { userId }
                     };
 
                     likes.Insert(newLikesForNews);
-                    likes.EnsureIndex(l => l.NewsId);
+                    likes.EnsureIndex(l => l.Id);
 
                     likesForNews = newLikesForNews;
                 }
@@ -122,7 +132,7 @@ namespace MyBlog.Data
             {
                 var likes = db.GetCollection<NewsLikes>(NEWS_LIKE_COLLECTION);
 
-                var likesForNews = likes.FindOne(l => l.NewsId == newsId);
+                var likesForNews = likes.FindOne(l => l.Id == newsId);
 
                 if (likesForNews is not null && likesForNews.UserIds.Contains(userId))
                 {

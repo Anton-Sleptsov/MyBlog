@@ -2,7 +2,7 @@
 {
     public class NewsLikes
     {
-        public int NewsId { get; set; }
+        public int Id { get; set; }
         public List<int> UserIds { get; set; }
     }
 }

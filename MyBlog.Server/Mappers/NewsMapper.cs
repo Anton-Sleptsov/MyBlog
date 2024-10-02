@@ -35,7 +35,7 @@ namespace MyBlog.Server.Mappers
             => new()
             {
                 Id = data.Id,
-                Author = _userMapper.BuildProfile(data.Author),
+                Author = _userMapper.BuildShortProfile(data.Author),
                 Text = data.Text,
                 Image = data.Image,
                 TimeOfCreation = data.TimeOfCreation,
