@@ -46,7 +46,7 @@ namespace MyBlog.Data.Repositories
 
             updatedUser!.Name = user.Name;
             updatedUser.Email = user.Email;
-            updatedUser.Password = user.Password;
+            //updatedUser.Password = user.Password;
             updatedUser.Description = user.Description;
             updatedUser.Photo = user.Photo;
 

@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { getToken } from "../../../services/repositories/accountRepository";
+import { PROFILE_URL } from "../../../services/appConstants";
 
 export default function Login() {
   const [login, setLogin] = useState();
   const [password, setPassword] = useState();
 
-  const showToken = () => {
-    const token = getToken(login, password);
-    console.log(token); 
+  async function setToken() {
+    await getToken(login, password);
+    window.location.href = PROFILE_URL;
   }
 
   return( <div>
@@ -20,6 +21,6 @@ export default function Login() {
       Пароль
       <input type="password" onChange={e => setPassword(e.target.value)}/>
     </label>
-    <button className="btn btn-primary" onClick={showToken}>Получить токен</button>
+    <button className="btn btn-primary" onClick={setToken}>Получить токен</button>
   </div>);
 }
